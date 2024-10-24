@@ -1,0 +1,43 @@
+#pip install --upgrade pip
+#pip install tensorflow
+
+import tensorflow as tf
+from tensorflow import keras
+import os,datetime
+
+mnist = tf.keras.datasets.mnist
+(x_train,y_train),(x_test,y_test)= mnist.load_data()
+print("Training Dataset Shape :" , x_train.shape)
+print('No. of Training Dataset Samples:', len(x_test))
+print('Testing Dataset Shape :',x_test.shape)
+print('No. of Testing Dataset Samples:', len(y_test))
+
+import matplotlib.pyplot as plt
+plt.imshow(x_train[3]) #cmap='gray')#
+plt.show()
+print("First Digit in y_train is",y_train[3])
+
+x_train,x_test = x_train / 255.0 , x_test / 255.0
+def create_model() :
+ model = tf.keras.models.Sequential([
+ tf.keras.layers.Flatten(input_shape=(28,28)),
+ tf.keras.layers.Dense(512, activation='relu'),
+ tf.keras.layers.Dropout(0.2),
+ tf.keras.layers.Dense(10, activation='softmax')
+ ])
+ return model
+
+model = create_model()
+
+model.compile(optimizer='adam',
+ loss='sparse_categorical_crossentropy',
+ metrics = ['accuracy'])
+
+logdir = os.path.join("logs/adam", datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
+tensorboard_callback = tf.keras.callbacks.TensorBoard(logdir, histogram_freq=1)
+
+checkpoint_path = "Model_checkpoint/cp-{epoch:04d}.weights.h5" # Change the file extension to .weights.h5
+checkpoint_dir = os.path.dirname(checkpoint_path)
+checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
+ checkpoint_path, monitor='val_acc', verbose=1, save_weights_only=True,
+ save_freq='epoch')
