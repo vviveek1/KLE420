@@ -1,0 +1,55 @@
+import pandas as pd
+df=pd.read_csv('/content/iris.csv')
+df.head()
+
+x=df[['sepal.length','sepal.width','petal.length','petal.width']]
+y=df[['variety']]
+
+from sklearn.model_selection import train_test_split
+x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.2,random_state=40)
+
+from sklearn.tree import DecisionTreeClassifier
+dtc=DecisionTreeClassifier()
+dtc.fit(x_train,y_train)
+y_pred=dtc.predict(x_test)
+y_pred
+
+from sklearn.metrics import accuracy_score,classification_report,confusion_matrix
+
+acc=accuracy_score(y_test,y_pred)
+print('accuracy:',acc)
+cm=confusion_matrix(y_test,y_pred)
+print('confussion_matrix: \n',cm)
+cr=classification_report(y_test,y_pred)
+print('classification_report:',cr)
+
+from sklearn.linear_model import LogisticRegression
+lr=LogisticRegression()
+lr.fit(x_train,y_train)
+
+y_pred=lr.predict(x_test)
+y_pred
+
+acc1=accuracy_score(y_test,y_pred)
+print('accuracy:',acc1)
+cm1=confusion_matrix(y_test,y_pred)
+print('confussion_matrix: \n',cm1)
+cr=classification_report(y_test,y_pred)
+print('classification_report:',cr)
+
+from sklearn.svm import SVC
+classifier=SVC(kernel='linear',random_state=0)
+classifier.fit(x_train,y_train)
+
+y_pred=classifier.predict(x_test)
+y_pred
+
+acc2=accuracy_score(y_test,y_pred)
+print('accuracy:',acc2)
+cm2=confusion_matrix(y_test,y_pred)
+print('confussion_matrix: \n',cm2)
+cr=classification_report(y_test,y_pred)
+print('classification_report:',cr)
+
+from pandas import DataFrame
+pd.DataFrame({'Classification':['Decision Tree','Logistic','SVC'], 'acc':[acc,acc1,acc2],'cm':[cm,cm1,cm2]})
