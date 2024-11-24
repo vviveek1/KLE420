@@ -1,0 +1,100 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
+df=pd.read_csv('/content/auto-mpg.csv')
+df
+
+
+# Check if 'name' column exists before dropping
+if 'name' in df.columns:
+  df.drop('name',axis=1,inplace=True)
+else:
+  print("Column 'name' not found in DataFrame")
+
+from sklearn.preprocessing import LabelEncoder
+le = LabelEncoder()
+df['origin'] = le.fit_transform(df['origin'])
+df
+
+
+df.isnull().sum()
+df.fillna(method='ffill',inplace=True)
+df.isnull().sum()
+
+
+x=df.iloc[:,1:8]
+y=df[['mpg']]
+x=df.iloc[:,1:8]
+y=df[['mpg']]
+
+x
+y
+
+
+from sklearn.model_selection import train_test_split
+x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.25,random_state=42)
+
+
+x_train
+x_test
+y_train
+Y_test
+
+
+from sklearn.model_selection import train_test_split
+rfr = RandomForestRegressor(n_estimators=100, random_state=0)
+rfr.fit(x_train, y_train)
+
+y_pred1 = rfr.predict(x_test)
+y_pred1
+
+from sklearn.metrics import mean_squared_error,r2_score,mean_absolute_error
+mse_RFR=mean_squared_error(y_test,y_pred1)
+mae_RFR=mean_absolute_error(y_test,y_pred1)
+r2_RFR=r2_score(y_test,y_pred1)
+rmse_RFR=np.sqrt(mse_RFR)
+
+print("Mean_Squared_Error:-",mse_RFR)
+print("Mean_Absolute_Error:-",mae_RFR)
+print("Root_Mean_Squared_Error:-",rmse_RFR)
+print("R2_Score:-",r2_RFR)
+
+
+from sklearn.svm import SVR
+SVR=SVR(kernel='rbf')
+SVR.fit(x_train,y_train)
+
+y_pred2 = SVR.predict(x_test)
+y_pred2
+
+mse_SVR=mean_squared_error(y_test,y_pred2)
+mae_SVR=mean_absolute_error(y_test,y_pred2)
+r2_SVR=r2_score(y_test,y_pred2)
+rmse_SVR=np.sqrt(mse_SVR)
+
+print("Mean_Squared_Error:-",mse_SVR)
+print("Mean_Absolute_Error:-",mae_SVR)
+print("Root_Mean_Squared_Error:-",rmse_SVR)
+print("R2_Score:-",r2_SVR)
+
+from sklearn.linear_model import Lasso
+LA=Lasso(alpha=3.0)
+LA.fit(x_train,y_train)
+
+y_pred3 = LA.predict(x_test)
+y_pred3
+
+mse_LA=mean_squared_error(y_test,y_pred3)
+mae_LA=mean_absolute_error(y_test,y_pred3)
+r2_LA=r2_score(y_test,y_pred3)
+rmse_LA=np.sqrt(mse_LA)
+
+print("Mean_Squared_Error:-",mse_LA)
+print("Mean_Absolute_Error:-",mae_LA)
+print("Root_Mean_Squared_Error:-",rmse_LA)
+print("R2_Score:-",r2_LA)
+
+pd.DataFrame({'Regressions':['RandomForestRegressor','SupportVectorRegression','Lasso Regression'],
+ 'mse':[mse_RFR,mse_SVR,mse_LA],'mae':[mae_RFR,mae_SVR,mae_LA],'r2':[r2_RFR,r2_SVR,r2_LA],
+ 'rmse':[rmse_RFR,rmse_SVR,rmse_LA]})
